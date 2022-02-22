@@ -21,20 +21,36 @@
       </div>
     </div>
     <h2 v-if="acertou">Você acertou!</h2>
+    <h2 v-if="errou">Você errou! Resposta: {{ answer }}</h2>
     <div class="keyboard">
       <div class="keyboardContent">
-        <div class="keyboardDiv" v-for="t in 9" :id="t" v-bind:key="t">
+        <div
+          class="keyboardDiv"
+          v-for="t in 10"
+          :id="keyboardContent[t]"
+          v-bind:key="t"
+        >
           {{ keyboardContent[t] }}
         </div>
       </div>
       <div class="keyboardContent">
-        <div class="keyboardDiv" v-for="t in 9" :id="t + 9" v-bind:key="t">
-          {{ keyboardContent[t + 9] }}
+        <div
+          class="keyboardDiv"
+          v-for="t in 9"
+          :id="keyboardContent[t + 10]"
+          v-bind:key="t"
+        >
+          {{ keyboardContent[t + 10] }}
         </div>
       </div>
       <div class="keyboardContentLast">
-        <div class="keyboardDiv" v-for="t in 7" :id="t + 18" v-bind:key="t">
-          {{ keyboardContent[t + 18] }}
+        <div
+          class="keyboardDiv"
+          v-for="t in 7"
+          :id="keyboardContent[t + 19]"
+          v-bind:key="t"
+        >
+          {{ keyboardContent[t + 19] }}
         </div>
       </div>
     </div>
@@ -52,7 +68,9 @@ export default {
       letter: ["", "", "", "", ""],
       correctLetter: false,
       acertou: false,
+      errou: false,
       keyboardContent: [
+        "",
         "q",
         "w",
         "e",
@@ -130,53 +148,87 @@ export default {
     },
 
     onEnter() {
-      const answerSplitted = this.answer.split("");
+      if (this.letter.includes("")) {
+        return null;
+      } else {
+        const answerSplitted = this.answer.split("");
 
-      for (let i = 0; i < answerSplitted.length; i++) {
-        let aux = i + 1;
-        let isIncluded = this.answer.includes(this.letter[i]);
-
-        if (answerSplitted[i] != this.letter[i] && isIncluded == false) {
-          let inputContent = document.getElementById("input" + this.auxX + aux);
-          inputContent.style.backgroundColor = "#2c3e50";
-        } else if (answerSplitted[i] == this.letter[i]) {
-          this.correctLetter = true;
-
+        for (let i = 0; i < answerSplitted.length; i++) {
           let aux = i + 1;
-          let inputContent = document.getElementById("input" + this.auxX + aux);
-          inputContent.style.backgroundColor = "#2ecc71";
-        } else if (answerSplitted[i] != this.letter[i] && isIncluded == true) {
-          let inputContent = document.getElementById("input" + this.auxX + aux);
-          inputContent.style.backgroundColor = "#f0932b";
-        }
-      }
-      for (let j = 1; j < 6; j++) {
-        let toDisableAgain = document.getElementById("input" + this.auxX + j);
-        toDisableAgain.disabled = true;
-      }
-      this.auxX++;
-      this.auxN = 0;
+          let isIncluded = this.answer.includes(this.letter[i]);
+          let keyboardToChange = document.getElementById(this.letter[i]);
 
-      try {
-        if (this.acertou != true) {
-          for (let j = 1; j < 6; j++) {
-            let toDisableAgain = document.getElementById(
-              "input" + this.auxX + j
+          if (answerSplitted[i] != this.letter[i] && isIncluded == false) {
+            let inputContent = document.getElementById(
+              "input" + this.auxX + aux
             );
-            toDisableAgain.disabled = true;
-            let toEnlable = document.getElementById("input" + this.auxX + j);
-            toEnlable.disabled = false;
+
+            inputContent.style.backgroundColor = "#2c3e50";
+            keyboardToChange.style.backgroundColor = "#2c3e50";
+          } else if (answerSplitted[i] == this.letter[i]) {
+            this.correctLetter = true;
+
+            let aux = i + 1;
+            let inputContent = document.getElementById(
+              "input" + this.auxX + aux
+            );
+            inputContent.style.backgroundColor = "#2ecc71";
+            keyboardToChange.style.backgroundColor = "#2ecc71";
+          } else if (
+            answerSplitted[i] != this.letter[i] &&
+            isIncluded == true
+          ) {
+            let inputContent = document.getElementById(
+              "input" + this.auxX + aux
+            );
+            inputContent.style.backgroundColor = "#f0932b";
+            keyboardToChange.style.backgroundColor = "#f0932b";
           }
         }
-      } catch (e) {
-        return null;
+        for (let j = 1; j < 6; j++) {
+          let toDisableAgain = document.getElementById("input" + this.auxX + j);
+          toDisableAgain.disabled = true;
+        }
+        this.auxX++;
+        this.auxN = 0;
+
+        // if (this.auxX > 6 && this.acertou != true) {
+        //   this.errou = true;
+        // }
+
+        try {
+          if (this.acertou != true) {
+            for (let j = 1; j < 6; j++) {
+              let toDisableAgain = document.getElementById(
+                "input" + this.auxX + j
+              );
+              toDisableAgain.disabled = true;
+              let toEnlable = document.getElementById("input" + this.auxX + j);
+              toEnlable.disabled = false;
+            }
+          }
+        } catch (e) {
+          return null;
+        }
+
+        this.auxConcat = `${this.auxX}${this.auxN + 1}`;
+        document.getElementById("input" + this.auxConcat).focus();
+
+        const result = this.letter.join("");
+
+        if (result == this.answer) {
+          this.acertou = true;
+          this.auxX = 0;
+          for (let x = 1; x < 6; x++) {
+            for (let j = 1; j < 6; j++) {
+              let toDisableAgain = document.getElementById("input" + x + j);
+              toDisableAgain.disabled = true;
+            }
+          }
+        }
+
+        this.letter = ["", "", "", "", ""];
       }
-
-      this.auxConcat = `${this.auxX}${this.auxN + 1}`;
-      document.getElementById("input" + this.auxConcat).focus();
-      this.letter = ["", "", "", "", ""];
-
-      console.log(this.correctLetter);
     },
   },
 };

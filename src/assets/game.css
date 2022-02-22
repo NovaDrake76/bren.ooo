@@ -16,6 +16,7 @@ input {
   caret-color: transparent;
   font-family: "Mitr", sans-serif;
   text-transform: uppercase;
+  transition: background-color 0.4s linear;
 }
 
 input:focus {
@@ -87,4 +88,5 @@ input:disabled {
   text-transform: uppercase;
   font-family: "Mitr", sans-serif;
   color: white;
+  transition: background-color 0.4s linear;
 }
