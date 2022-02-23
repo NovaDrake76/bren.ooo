@@ -65,7 +65,13 @@ input:disabled {
   justify-content: space-evenly;
 }
 
-.keyboardContent {
+.keyboardContentFirst {
+  display: flex;
+  justify-content: space-evenly;
+  width: 90%;
+}
+
+.keyboardContentMid {
   display: flex;
   justify-content: space-evenly;
   width: 80%;
@@ -89,4 +95,23 @@ input:disabled {
   font-family: "Mitr", sans-serif;
   color: white;
   transition: background-color 0.4s linear;
+}
+
+.correctDiv {
+  display: flex;
+  justify-content: space-around;
+}
+
+.copyBtn {
+  width: 70px;
+  height: 40px;
+  background-color: transparent;
+  border-radius: 8px;
+  border: none;
+  color: white;
+  font-family: "Mitr", sans-serif;
+}
+
+.copyBtn:hover {
+  background-color: #2980b9;
 }

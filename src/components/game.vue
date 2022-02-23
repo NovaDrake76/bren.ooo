@@ -20,10 +20,17 @@
         </div>
       </div>
     </div>
-    <h2 v-if="acertou">Você acertou!</h2>
+
+    <div class="correctDiv" v-if="acertou">
+      <h2>Você acertou!</h2>
+      <button class="copyBtn" type="button" @click="copy(toCopy)">
+        <font-awesome-icon icon="fa-solid fa-copy" /> Copiar
+      </button>
+    </div>
+
     <h2 v-if="errou">Você errou! Resposta: {{ answer }}</h2>
     <div class="keyboard">
-      <div class="keyboardContent">
+      <div class="keyboardContentFirst">
         <div
           class="keyboardDiv"
           v-for="t in 10"
@@ -33,7 +40,7 @@
           {{ keyboardContent[t] }}
         </div>
       </div>
-      <div class="keyboardContent">
+      <div class="keyboardContentMid">
         <div
           class="keyboardDiv"
           v-for="t in 9"
@@ -98,6 +105,8 @@ export default {
         "n",
         "m",
       ],
+      share: [],
+      toCopy: "",
     };
   },
   mounted() {
@@ -165,6 +174,7 @@ export default {
 
             inputContent.style.backgroundColor = "#2c3e50";
             keyboardToChange.style.backgroundColor = "#2c3e50";
+            this.share.push("🟥");
           } else if (answerSplitted[i] == this.letter[i]) {
             this.correctLetter = true;
 
@@ -174,6 +184,7 @@ export default {
             );
             inputContent.style.backgroundColor = "#2ecc71";
             keyboardToChange.style.backgroundColor = "#2ecc71";
+            this.share.push("🟩");
           } else if (
             answerSplitted[i] != this.letter[i] &&
             isIncluded == true
@@ -183,6 +194,7 @@ export default {
             );
             inputContent.style.backgroundColor = "#f0932b";
             keyboardToChange.style.backgroundColor = "#f0932b";
+            this.share.push("🟨");
           }
         }
         for (let j = 1; j < 6; j++) {
@@ -191,10 +203,6 @@ export default {
         }
         this.auxX++;
         this.auxN = 0;
-
-        // if (this.auxX > 6 && this.acertou != true) {
-        //   this.errou = true;
-        // }
 
         try {
           if (this.acertou != true) {
@@ -205,6 +213,9 @@ export default {
               toDisableAgain.disabled = true;
               let toEnlable = document.getElementById("input" + this.auxX + j);
               toEnlable.disabled = false;
+            }
+            if (this.auxX == 7) {
+              this.errou = true;
             }
           }
         } catch (e) {
@@ -219,6 +230,23 @@ export default {
         if (result == this.answer) {
           this.acertou = true;
           this.auxX = 0;
+
+          let shareString =
+            this.share.slice(0, 5) +
+            "\n" +
+            this.share.slice(5, 10) +
+            "\n" +
+            this.share.slice(10, 15) +
+            "\n" +
+            this.share.slice(15, 20) +
+            "\n" +
+            this.share.slice(20, 25) +
+            "\n" +
+            this.share.slice(25, 30);
+
+          let toCopyNoComma = shareString.replaceAll(",", "");
+          this.toCopy = "Meu Bren.ooo de hoje: " + "\n" + toCopyNoComma;
+
           for (let x = 1; x < 6; x++) {
             for (let j = 1; j < 6; j++) {
               let toDisableAgain = document.getElementById("input" + x + j);
@@ -229,6 +257,9 @@ export default {
 
         this.letter = ["", "", "", "", ""];
       }
+    },
+    async copy(s) {
+      await navigator.clipboard.writeText(s);
     },
   },
 };
